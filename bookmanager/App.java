@@ -1,35 +1,37 @@
 package hus.oop.bookmanager;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class App {
     private static final String COMMA_DELIMITER = ",";
-
     private static final BookManager bookManager = new BookManager();
 
     public static void main(String[] args) {
         init();
-        testOriginalData();
-
-        /* Yêu cầu:
-        - Hoàn thiện code chương trình theo mẫu đã cho.
-        - Viết code để test cho tất cả các hàm test bên dưới.
-
-        - Thực hiện chạy từng hàm test, lưu kết quả chạy chương trình và file text được đặt tên
-          là <TenSinhVien_MaSinhVien_BookManager>.txt (Ví dụ, NguyenVanA_123456_BookManager.txt).
-        - Nén các file source code và file text kết quả chạy chương trình vào file zip có tên
-          <TenSinhVien_MaSinhVien_BookManager>.zip (Ví dụ, NguyenVanA_123456_BookManager.zip),
-          nộp lên classroom.
-         */
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output3.txt"))) {
+            testOriginalData(writer);
+            testSortIncreasingTitleAndPrice(writer);
+            testSortDecreasingTitleAndPrice(writer);
+            testPriceOfBooksIncreasing(writer);
+            testPriceOfBooksDecreasing(writer);
+            testFilterBooksLowestPrice(writer);
+            testFilterBooksHighestPrice(writer);
+            testFilterBooksOfAuthor(writer);
+            testFilterBooksOfPublisher(writer);
+            testFilterBooksOfGenre(writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void init() {
-        String filePath = "data/books.csv";
+        String filePath = "C:\\Users\\Admin\\Desktop\\data\\books.csv";
         readListData(filePath);
     }
 
@@ -39,30 +41,36 @@ public class App {
             String line;
             dataReader = new BufferedReader(new FileReader(filePath));
 
-            // Read file line by line?
             while ((line = dataReader.readLine()) != null) {
                 List<String> dataList = parseDataLineToList(line);
                 if (dataList.size() != 6) {
                     continue;
                 }
 
-                if (dataList.get(0).equals("title")) {
+                if (dataList.get(0).equals("title")) { // Skip header
                     continue;
                 }
 
-                /*
-                TODO
-                Đọc được dữ liệu, tạo ra các đối tượng Book ở đây, và cho vào bookManager để quản lý.
+                // Extract data
+                String title = dataList.get(0);
+                String author = dataList.get(1);
+                String genre = dataList.get(2);
+                int pages = Integer.parseInt(dataList.get(3));
+                double price = Double.parseDouble(dataList.get(4));
+                //int pages = Integer.parseInt(dataList.get(4));
+                String publisher = dataList.get(5);
 
-                Gợi ý:
-                Các đội tượng Book không thể được tạo trực tiếp ở đây do hàm dựng là private,
-                các đối tượng này được tạo ra bằng cách sử dụng Builder Pattern, ví dụ theo cách sau:
-                Book newBook = new Book.BookBuilder(title).
-                    .withAuthor(author)
-                    .withGenre(genre)
-                    ...
-                    .build();
-                */
+                // Use BookBuilder to create Book object
+                Book newBook = new Book.BookBuilder(title)
+                        .withAuthor(author)
+                        .withGenre(genre)
+                        .withPrice(price)
+                        .withPages(pages)
+                        .withPublisher(publisher)
+                        .build();
+
+                // Add book to bookManager
+                bookManager.insertAtEnd(newBook);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,8 +88,8 @@ public class App {
         List<String> result = new ArrayList<>();
         if (dataLine != null) {
             String[] splitData = dataLine.split(COMMA_DELIMITER);
-            for (int i = 0; i < splitData.length; i++) {
-                result.add(splitData[i]);
+            for (String data : splitData) {
+                result.add(data);
             }
         }
         return result;
@@ -95,71 +103,63 @@ public class App {
         return dataLine.split(COMMA_DELIMITER);
     }
 
-    public static void testOriginalData() {
+    public static void testOriginalData(BufferedWriter writer) throws IOException {
         List<Book> books = bookManager.getBookList();
-        System.out.print(books);
+        writer.write("Original Data:\n");
+        writer.write(books.toString() + "\n");
     }
 
-    /**
-     * Test sắp xếp book theo tiêu chí, đầu tiên theo title tăng dần, sau đó theo giá giảm dần.
-     */
-    public static void testSortIncreasingTitleAndPrice() {
-        /* TODO */
+    public static void testSortIncreasingTitleAndPrice(BufferedWriter writer) throws IOException {
+        List<Book> sortedBooks = bookManager.sortIncreasingTitleAndPrice();
+        writer.write("Sorted by title increasing and price decreasing:\n");
+        writer.write(sortedBooks.toString() + "\n");
     }
 
-    /**
-     * Test sắp xếp book theo tiêu chí, đầu tiên theo title giảm dần, sau đó theo giá giảm dần.
-     */
-    public static void testSortDecreasingTitleAndPrice() {
-        /* TODO */
+    public static void testSortDecreasingTitleAndPrice(BufferedWriter writer) throws IOException {
+        List<Book> sortedBooks = bookManager.sortDecreasingTitleAndPrice();
+        writer.write("Sorted by title decreasing and price decreasing:\n");
+        writer.write(sortedBooks.toString() + "\n");
     }
 
-    /**
-     * Test sắp xếp book theo giá tăng dần.
-     */
-    public static void testPriceOfBooksIncreasing() {
-        /* TODO */
+    public static void testPriceOfBooksIncreasing(BufferedWriter writer) throws IOException {
+        List<Book> sortedBooks = bookManager.sortIncreasingPrice();
+        writer.write("Sorted by price increasing:\n");
+        writer.write(sortedBooks.toString() + "\n");
     }
 
-    /**
-     * Test sắp xếp book theo giá giảm dần
-     */
-    public static void testPriceOfBooksDecreasing() {
-        /* TODO */
+    public static void testPriceOfBooksDecreasing(BufferedWriter writer) throws IOException {
+        List<Book> sortedBooks = bookManager.sortDecreasingPrice();
+        writer.write("Sorted by price decreasing:\n");
+        writer.write(sortedBooks.toString() + "\n");
     }
 
-    /**
-     * Test lọc ra những book có giá rẻ nhất.
-     */
-    public static void testFilterBooksLowestPrice() {
-        /* TODO */
+    public static void testFilterBooksLowestPrice(BufferedWriter writer) throws IOException {
+        List<Book> filteredBooks = bookManager.filterHighestPrice(1);  // Get one book with the highest price
+        writer.write("Filtered by lowest price:\n");
+        writer.write(filteredBooks.toString() + "\n");
     }
 
-    /**
-     * Test lọc ra những book có giá cao nhất.
-     */
-    public static void testFilterBooksHighestPrice() {
-        /* TODO */
+    public static void testFilterBooksHighestPrice(BufferedWriter writer) throws IOException {
+        List<Book> filteredBooks = bookManager.filterHighestPrice(1);  // Get one book with the highest price
+        writer.write("Filtered by highest price:\n");
+        writer.write(filteredBooks.toString() + "\n");
     }
 
-    /**
-     * Test lọc ra những book theo tác giả.
-     */
-    public static void testFilterBooksOfAuthor() {
-        /* TODO */
+    public static void testFilterBooksOfAuthor(BufferedWriter writer) throws IOException {
+        List<Book> filteredBooks = bookManager.filterBooksOfAuthor("Some Author");
+        writer.write("Filtered by author:\n");
+        writer.write(filteredBooks.toString() + "\n");
     }
 
-    /**
-     * Test lọc ra những book theo nhà xuất bản.
-     */
-    public static void testFilterBooksOfPublisher() {
-        /* TODO */
+    public static void testFilterBooksOfPublisher(BufferedWriter writer) throws IOException {
+        List<Book> filteredBooks = bookManager.filterBooksOfPublisher("Some Publisher");
+        writer.write("Filtered by publisher:\n");
+        writer.write(filteredBooks.toString() + "\n");
     }
 
-    /**
-     * Test lọc ra những book theo thể loại.
-     */
-    public static void testFilterBooksOfGenre() {
-        /* TODO */
+    public static void testFilterBooksOfGenre(BufferedWriter writer) throws IOException {
+        List<Book> filteredBooks = bookManager.filterBooksOfGenre("Fiction");
+        writer.write("Filtered by genre:\n");
+        writer.write(filteredBooks.toString() + "\n");
     }
 }

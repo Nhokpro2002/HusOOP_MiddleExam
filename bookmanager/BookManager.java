@@ -1,17 +1,18 @@
 package hus.oop.bookmanager;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 public class BookManager {
     private List<Book> bookList;
 
     public BookManager() {
-        /* TODO */
+        bookList = new ArrayList<>();
     }
 
     public List<Book> getBookList() {
-        /* TODO */
-        return null;
+        return bookList;
     }
 
     /**
@@ -21,8 +22,7 @@ public class BookManager {
      * @return
      */
     private boolean checkBoundaries(int index, int limit) {
-        /* TODO */
-        return true;
+        return index >= 0 && index < limit;
     }
 
     /**
@@ -30,7 +30,7 @@ public class BookManager {
      * @param book
      */
     public void insertAtEnd(Book book) {
-        /* TODO */
+        bookList.add(book);
     }
 
     /**
@@ -39,7 +39,11 @@ public class BookManager {
      * @param index
      */
     public void insertAPos(Book book, int index) {
-        /* TODO */
+        if (checkBoundaries(index, bookList.size())) {
+            bookList.add(index, book);
+        } else {
+            System.out.println("Index out of bounds.");
+        }
     }
 
     /**
@@ -47,7 +51,11 @@ public class BookManager {
      * @param index
      */
     public void remove(int index) {
-        /* TODO */
+        if (checkBoundaries(index, bookList.size())) {
+            bookList.remove(index);
+        } else {
+            System.out.println("Index out of bounds.");
+        }
     }
 
     /**
@@ -55,7 +63,7 @@ public class BookManager {
      * @param book
      */
     public void remove(Book book) {
-        /* TODO */
+        bookList.remove(book);
     }
 
     /**
@@ -64,7 +72,9 @@ public class BookManager {
      * @return
      */
     public Book bookAt(int index) {
-        /* TODO */
+        if (checkBoundaries(index, bookList.size())) {
+            return bookList.get(index);
+        }
         return null;
     }
 
@@ -73,8 +83,8 @@ public class BookManager {
      * @return
      */
     public List<Book> sortIncreasingByTitle() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparing(Book::getTitle));
+        return bookList;
     }
 
     /**
@@ -83,8 +93,9 @@ public class BookManager {
      * @return
      */
     public List<Book> sortIncreasingTitleAndPrice() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparing(Book::getTitle)
+                .thenComparing(Comparator.comparingDouble(Book::getPrice).reversed()));
+        return bookList;
     }
 
     /**
@@ -93,8 +104,9 @@ public class BookManager {
      * @return
      */
     public List<Book> sortDecreasingTitleAndPrice() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparing(Book::getTitle).reversed()
+                .thenComparing(Comparator.comparingDouble(Book::getPrice).reversed()));
+        return bookList;
     }
 
     /**
@@ -102,8 +114,8 @@ public class BookManager {
      * @return
      */
     public List<Book> sortIncreasingPrice() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparingDouble(Book::getPrice));
+        return bookList;
     }
 
     /**
@@ -111,8 +123,8 @@ public class BookManager {
      * @return
      */
     public List<Book> sortDecreasingPrice() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparingDouble(Book::getPrice).reversed());
+        return bookList;
     }
 
     /**
@@ -120,8 +132,8 @@ public class BookManager {
      * @return
      */
     public List<Book> sortIncreasingPages() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparingInt(Book::getPages));
+        return bookList;
     }
 
     /**
@@ -129,8 +141,8 @@ public class BookManager {
      * @return
      */
     public List<Book> sortDecreasingPages() {
-        /* TODO */
-        return null;
+        bookList.sort(Comparator.comparingInt(Book::getPages).reversed());
+        return bookList;
     }
 
     /**
@@ -139,8 +151,10 @@ public class BookManager {
      * @return
      */
     public List<Book> filterHighestPrice(int howMany) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .sorted(Comparator.comparingDouble(Book::getPrice).reversed())
+                .limit(howMany)
+                .toList();
     }
 
     /**
@@ -149,8 +163,9 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBooksPriceHigherThan(double lowerBound) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .filter(book -> book.getPrice() > lowerBound)
+                .toList();
     }
 
     /**
@@ -159,8 +174,10 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBookLowestPages(int howMany) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .sorted(Comparator.comparingInt(Book::getPages))
+                .limit(howMany)
+                .toList();
     }
 
     /**
@@ -169,8 +186,9 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBooksPagesLowerThan(double upperBound) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .filter(book -> book.getPages() < upperBound)
+                .toList();
     }
 
     /**
@@ -179,8 +197,9 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBooksOfPublisher(String publisher) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .filter(book -> book.getPublisher().equals(publisher))
+                .toList();
     }
 
     /**
@@ -189,8 +208,9 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBooksOfGenre(String genre) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .filter(book -> book.getGenre().equals(genre))
+                .toList();
     }
 
     /**
@@ -199,8 +219,9 @@ public class BookManager {
      * @return
      */
     public List<Book> filterBooksOfAuthor(String author) {
-        /* TODO */
-        return null;
+        return bookList.stream()
+                .filter(book -> book.getAuthor().equals(author))
+                .toList();
     }
 
     public static String titleOfBooksToString(List<Book> bookList) {

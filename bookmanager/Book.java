@@ -23,28 +23,28 @@ public class Book implements MyBookComparable {
         }
 
         public BookBuilder withAuthor(String author) {
-            /* TODO */
-            return null;
+            this.author = author;
+            return this; // Trả về chính builder để có thể gọi tiếp
         }
 
         public BookBuilder withGenre(String genre) {
-            /* TODO */
-            return null;
+            this.genre = genre;
+            return this;
         }
 
         public BookBuilder withPages(int pages) {
-            /* TODO */
-            return null;
+            this.pages = pages;
+            return this;
         }
 
         public BookBuilder withPrice(double price) {
-            /* TODO */
-            return null;
+            this.price = price;
+            return this;
         }
 
         public BookBuilder withPublisher(String publisher) {
-            /* TODO */
-            return null;
+            this.publisher = publisher;
+            return this;
         }
 
         public Book build() {
@@ -85,20 +85,24 @@ public class Book implements MyBookComparable {
 
     @Override
     public String toString() {
-        /* TODO */
-        return null;
+        return "Book{" +
+                "title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", genre='" + genre + '\'' +
+                ", pages=" + pages +
+                ", price=" + price +
+                ", publisher='" + publisher + '\'' +
+                '}';
     }
 
     /**
      * Phương thức đưa ra tiêu chí so sánh 2 đối tượng kiểu Book
-     *  sao chothứ tự tăng dần theo title.
+     *  sao cho thứ tự tăng dần theo title.
      * @param another
      * @return
      */
     @Override
     public int compareTo(Book another) {
-        /* TODO */
-        return 0;
+        return this.title.compareTo(another.title); // So sánh theo tên sách (title)
     }
 }
-
